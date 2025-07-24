@@ -1,0 +1,306 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 20px;
+        background-color: #dba669;
+    }
+
+    h1 {
+        color: #226828;
+    }
+
+    p {
+        color: #333;
+    }
+
+    form {
+        margin-top: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        margin-right: 5px;
+    }
+
+    input[type="text"], select {
+        padding: 5px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button {
+        background-color: #226828;
+        color: #fff;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    #prayerCalendar {
+        margin-top: 30px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #226828;
+        color: #fff;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    /* Popup styles */
+    #manualEntryForm {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        width: 350px;
+        text-align: left;
+    }
+
+    #manualEntryForm input[type="text"], #manualEntryForm select {
+        padding: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: calc(100% - 12px);
+    }
+
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 999;
+    }
+
+    #manualEntryForm .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgb(34, 104, 34);
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #fff;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+    }
+
+    /* Styles pour l'affichage des heures de prière */
+    #prayerTimes {
+        text-align: center; /* Centre le texte dans le conteneur */
+        margin-top: 20px;
+        font-family: Arial, sans-serif; /* Police de caractères pour une meilleure lisibilité */
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: inline-block;
+        margin: 20px auto;
+    }
+
+    #prayerTimes h2 {
+        color: #226828;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    #prayerTimes p {
+        color: #333;
+        font-size: 18px;
+        margin: 5px 0;
+    }
+
+    #countdown {
+        color: #226828;
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 5px;
+        display: block;
+        text-align: center;
+    }
+
+    #currentTime {
+
+    margin-top: 0; /* Assurez-vous qu'il n'y a pas de marge en haut */
+    margin-bottom: 0px; /* Ajustez cette valeur selon vos besoins */
+}
+
+#currentInfo {
+    display: flex;
+justify-content: center; /* Centrer horizontalement */
+align-items: center; /* Aligner verticalement si nécessaire */
+gap: 20px; /* Espace entre la date et l'heure */
+}
+
+#currentDate, #currentTime {
+color: #333;
+font-size: 18px;
+margin: 5px 0;
+margin: 0; /* Supprimer les marges pour un alignement plus précis */
+}
+
+/* Style général pour le popup des paramètres */
+#settingsPopup {
+display: none;
+position: fixed;
+z-index: 1000;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background-color: white;
+padding: 20px;
+box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+border-radius: 10px;
+width: 300px; /* Ajustez la largeur selon vos besoins */
+}
+
+/* Style pour le conteneur des boutons dans le popup */
+#settingsPopup .button-container {
+    display: flex;
+    flex-direction: row; /* Aligne les boutons en ligne */
+    justify-content: space-between; /* Espace entre les boutons */
+    gap: 10px; /* Espace entre les boutons */
+}
+
+
+/* Style pour les boutons dans le popup */
+#settingsPopup button {
+width: 100%; /* Occupe toute la largeur disponible */
+padding: 10px; /* Ajustez le padding pour une meilleure apparence */
+font-size: 16px; /* Taille de la police pour une bonne lisibilité */
+border: none;
+border-radius: 4px;
+background-color: #226828;
+color: #fff;
+cursor: pointer;
+}
+
+/* Style pour le sélecteur */
+#adhanSelector {
+margin-bottom: 20px; /* Ajoute de l'espace en dessous du sélecteur */
+width: 100%; /* Assure que le sélecteur occupe toute la largeur disponible */
+padding: 8px; /* Ajoute un peu de padding pour un meilleur affichage */
+border: 1px solid #ccc; /* Ajoute une bordure pour un meilleur contraste */
+border-radius: 4px; /* Arrondit les coins du sélecteur */
+}
+
+
+
+/* Style pour les boutons de mute et settings */
+#muteButton, #settingsButton {
+font-size: 16px; /* Réduit la taille de la police */
+padding: 5px 7px; /* Ajuste le padding pour les rendre plus petits */
+width: auto; /* Assure que la largeur s'ajuste au contenu */
+height: auto; /* Assure que la hauteur s'ajuste au contenu */
+}
+
+/* Style spécifique pour le bouton mute */
+#muteButton {
+font-size: 15px; /* Ajuste la taille de la police pour le bouton mute */
+}
+
+/* Style spécifique pour le bouton settings */
+#settingsButton {
+font-size: 15px; /* Ajuste la taille de la police pour le bouton settings */
+}
+
+@media (max-width: 600px) {
+#settingsPopup {
+    width: 90%; /* Utilisez 90% de la largeur de l'écran pour les petits écrans */
+}
+
+#settingsPopup button {
+    padding: 8px; /* Réduit le padding pour les petits écrans */
+    font-size: 14px; /* Réduit la taille de la police pour les petits écrans */
+}
+}
+
+/* Conteneur des boutons */
+#navigationButtons {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Espace entre les boutons */
+}
+
+/* Style de base des boutons */
+#navigationButtons button {
+    background-color: #226828;
+    color: white;
+    padding: 10px;
+    margin: 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    flex: 1 1 auto; /* Permet aux boutons de s'ajuster */
+    max-width: 100px; /* Largeur maximale pour éviter de trop élargir les boutons */
+}
+
+/* Effet au survol */
+#navigationButtons button:hover {
+    background-color: #1a5120;
+}
+
+/* Transformation des boutons en emoji sur les petits écrans */
+@media (max-width: 400px) {
+    #navigationButtons button {
+        font-size: 0; /* Masque le texte */
+        padding: 10px; /* Ajuste le padding pour les émojis */
+    }
+
+    /* Ajoute les émojis spécifiques */
+    #navigationButtons button[data-text="Calendar"]::before {
+        content: "📅";
+        font-size: 24px; /* Taille de l'emoji */
+    }
+
+    #navigationButtons button[data-text="Infos"]::before {
+        content: "ℹ️";
+        font-size: 24px;
+    }
+
+    #navigationButtons button[data-text="Mosquee"]::before {
+        content: "🕌";
+        font-size: 24px;
+    }
+}
+
+
+
+
+</style>
