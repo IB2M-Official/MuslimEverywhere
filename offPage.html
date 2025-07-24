@@ -1,0 +1,547 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heures de prière</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 20px;
+        background-color: #dba669;
+    }
+
+    h1 {
+        color: #226828;
+    }
+
+    p {
+        color: #333;
+    }
+
+    form {
+        margin-top: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        margin-right: 5px;
+    }
+
+    input[type="text"], select {
+        padding: 5px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button {
+        background-color: #226828;
+        color: #fff;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    #prayerCalendar {
+        margin-top: 30px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #226828;
+        color: #fff;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    /* Popup styles */
+    #manualEntryForm {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        width: 350px;
+        text-align: left;
+    }
+
+    #manualEntryForm input[type="text"], #manualEntryForm select {
+        padding: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: calc(100% - 12px);
+    }
+
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 999;
+    }
+
+    #manualEntryForm .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgb(34, 104, 34);
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #fff;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+    }
+
+    /* Styles pour l'affichage des heures de prière */
+    #prayerTimes {
+        text-align: center; /* Centre le texte dans le conteneur */
+        margin-top: 20px;
+        font-family: Arial, sans-serif; /* Police de caractères pour une meilleure lisibilité */
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: inline-block;
+        margin: 20px auto;
+    }
+
+    #prayerTimes h2 {
+        color: #226828;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    #prayerTimes p {
+        color: #333;
+        font-size: 18px;
+        margin: 5px 0;
+    }
+
+    #countdown {
+        color: #226828;
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 5px;
+        display: block;
+        text-align: center;
+    }
+
+    #currentTime {
+
+    margin-top: 0; /* Assurez-vous qu'il n'y a pas de marge en haut */
+    margin-bottom: 0px; /* Ajustez cette valeur selon vos besoins */
+}
+
+#currentInfo {
+    display: flex;
+justify-content: center; /* Centrer horizontalement */
+align-items: center; /* Aligner verticalement si nécessaire */
+gap: 20px; /* Espace entre la date et l'heure */
+}
+
+#currentDate, #currentTime {
+color: #333;
+font-size: 18px;
+margin: 5px 0;
+margin: 0; /* Supprimer les marges pour un alignement plus précis */
+}
+
+/* Style général pour le popup des paramètres */
+#settingsPopup {
+display: none;
+position: fixed;
+z-index: 1000;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background-color: white;
+padding: 20px;
+box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+border-radius: 10px;
+width: 300px; /* Ajustez la largeur selon vos besoins */
+}
+
+/* Style pour le conteneur des boutons dans le popup */
+#settingsPopup .button-container {
+    display: flex;
+    flex-direction: row; /* Aligne les boutons en ligne */
+    justify-content: space-between; /* Espace entre les boutons */
+    gap: 10px; /* Espace entre les boutons */
+}
+
+
+/* Style pour les boutons dans le popup */
+#settingsPopup button {
+width: 100%; /* Occupe toute la largeur disponible */
+padding: 10px; /* Ajustez le padding pour une meilleure apparence */
+font-size: 16px; /* Taille de la police pour une bonne lisibilité */
+border: none;
+border-radius: 4px;
+background-color: #226828;
+color: #fff;
+cursor: pointer;
+}
+
+/* Style pour le sélecteur */
+#adhanSelector {
+margin-bottom: 20px; /* Ajoute de l'espace en dessous du sélecteur */
+width: 100%; /* Assure que le sélecteur occupe toute la largeur disponible */
+padding: 8px; /* Ajoute un peu de padding pour un meilleur affichage */
+border: 1px solid #ccc; /* Ajoute une bordure pour un meilleur contraste */
+border-radius: 4px; /* Arrondit les coins du sélecteur */
+}
+
+
+
+/* Style pour les boutons de mute et settings */
+#muteButton, #settingsButton {
+font-size: 16px; /* Réduit la taille de la police */
+padding: 5px 7px; /* Ajuste le padding pour les rendre plus petits */
+width: auto; /* Assure que la largeur s'ajuste au contenu */
+height: auto; /* Assure que la hauteur s'ajuste au contenu */
+}
+
+/* Style spécifique pour le bouton mute */
+#muteButton {
+font-size: 15px; /* Ajuste la taille de la police pour le bouton mute */
+}
+
+/* Style spécifique pour le bouton settings */
+#settingsButton {
+font-size: 15px; /* Ajuste la taille de la police pour le bouton settings */
+}
+
+@media (max-width: 600px) {
+#settingsPopup {
+    width: 90%; /* Utilisez 90% de la largeur de l'écran pour les petits écrans */
+}
+
+#settingsPopup button {
+    padding: 8px; /* Réduit le padding pour les petits écrans */
+    font-size: 14px; /* Réduit la taille de la police pour les petits écrans */
+}
+}
+
+/* Conteneur des boutons */
+#navigationButtons {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Espace entre les boutons */
+}
+
+/* Style de base des boutons */
+#navigationButtons button {
+    background-color: #226828;
+    color: white;
+    padding: 10px;
+    margin: 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    flex: 1 1 auto; /* Permet aux boutons de s'ajuster */
+    max-width: 100px; /* Largeur maximale pour éviter de trop élargir les boutons */
+}
+
+/* Effet au survol */
+#navigationButtons button:hover {
+    background-color: #1a5120;
+}
+
+/* Transformation des boutons en emoji sur les petits écrans */
+@media (max-width: 400px) {
+    #navigationButtons button {
+        font-size: 0; /* Masque le texte */
+        padding: 10px; /* Ajuste le padding pour les émojis */
+    }
+
+    /* Ajoute les émojis spécifiques */
+    #navigationButtons button[data-text="Calendar"]::before {
+        content: "📅";
+        font-size: 24px; /* Taille de l'emoji */
+    }
+
+    #navigationButtons button[data-text="Infos"]::before {
+        content: "ℹ️";
+        font-size: 24px;
+    }
+
+    #navigationButtons button[data-text="Mosquee"]::before {
+        content: "🕌";
+        font-size: 24px;
+    }
+}
+
+
+
+
+</style>
+
+
+
+<h1>Heures de prière</h1>
+<audio id="adhanAudio" src="audio/azan1" preload="auto"></audio>
+
+
+<div id="locationButtons">
+    <button id="muteButton" onclick="toggleMute()">🔊</button>
+    <button id="locateMe">Localiser</button>
+    <button id="enterManually">Entrée manuelle</button>
+    <button id="settingsButton">⚙️</button>
+</div>
+
+<div id="settingsPopup">
+    <h3>Choisir l'Adhan</h3>
+    <select id="adhanSelector">
+        <option value="audio/azan1.mp3">Adhan 1</option>
+        <option value="audio/azan2.mp3">Adhan 2</option>
+        <option value="audio/azan3.mp3">Adhan 3</option>
+        <option value="audio/azan4.mp3">Adhan 4</option>
+        <option value="audio/azan5.mp3">Adhan 5</option>
+        <option value="audio/azan6.mp3">Adhan 6</option>
+        <option value="audio/azan7.mp3">Adhan 7</option>
+        <option value="audio/azan8.mp3">Adhan 8</option>
+        <option value="audio/azan9.mp3">Adhan 9</option>
+    </select>
+    <div class="button-container">
+        <button>Pause</button>
+        <button id="playPauseAdhanButton" onclick="saveSettings()">Écouter</button>
+        <button onclick="closeSettings()" class="close-btn">Fermer</button>
+    </div>
+</div>
+
+<div id="overlay"></div>
+<div id="manualEntryForm">
+    <button class="close-btn">×</button>
+    <form id="prayerForm">
+        <label for="city">Ville:</label>
+        <input type="text" id="city" required="">
+        <label for="country">Pays:</label>
+        <input type="text" id="country" required="">
+        <label for="convention">Convention:</label>
+        <select id="convention">
+            <option value="12">La plus pertinente (Convention 12)</option>
+            <option value="1">Shia Ithna-Ansari (Convention 0)</option>
+            <option value="2">University of Islamic Sciences, Karachi (Convention 1)</option>
+            <option value="3">Islamic Society of North America (Convention 2)</option>
+            <option value="4">Muslim World League (Convention 3)</option>
+            <option value="5">Umm Al-Qura University, Makkah (Convention 4)</option>
+            <option value="6">Egyptian General Authority of Survey (Convention 5)</option>
+            <option value="7">Institute of Geophysics, University of Tehran (Convention 7)</option>
+            <option value="8">Gulf Region (Convention 8)</option>
+            <option value="9">Kuwait (Convention 9)</option>
+            <option value="10">Qatar (Convention 10)</option>
+            <option value="11">Majlis Ugama Islam Singapura, Singapore (Convention 11)</option>
+            <option value="12">Union Organization islamic de France (Convention 12)</option>
+            <option value="13">Diyanet İşleri Başkanlığı, Turkey (Convention 13)</option>
+            <option value="14">Spiritual Administration of Muslims of Russia (Convention 14)</option>
+            <option value="15">Moonsighting Committee Worldwide (Convention 15)</option>
+            <option value="16">Dubai (unofficial) (Convention 16)</option>
+        </select>
+
+        <!-- Avertissement -->
+        <div style="color: red; display: flex; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 24px; margin-right: 8px;">⚠️</span>
+            <span>Vérifiez bien l'orthographe de votre ville. Si les heures de prière vous paraissent fausses, choisissez une autre ville plus proche avec plus d'habitants.</span>
+        </div>
+
+        <button type="submit">Synchroniser les heures de prière</button>
+    </form>
+</div>
+<p id="countdown"></p>
+<div id="currentInfo">
+    <p id="currentDate"></p>
+    <p id="currentTime"></p>
+</div>
+<div id="prayerTimes"></div>
+
+
+<div id="navigationButtons" style="margin-top: 20px;">
+    <button onclick="window.location.href='calendar.html'" data-text="Calendar">Calendrier</button>
+    <button onclick="window.location.href='infos.html'" data-text="Infos">Infos</button>
+    <button onclick="window.location.href='mosqueegps.html'" data-text="Mosquee">Mosquées</button>
+</div>
+
+<div class="footer">
+    <p>&copy; 2024 Muslim Everywhere. Tous droits réservés.</p>
+</div>
+
+
+<script src="scriptOffline.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const adhanAudio = document.getElementById('adhanAudio');
+        const muteButton = document.getElementById('muteButton');
+        const adhanSelector = document.getElementById('adhanSelector');
+
+        // Charger l'Adhan choisi depuis le stockage local
+        const storedAdhanSrc = localStorage.getItem('selectedAdhan') || 'audio/azan1.mp3';
+        adhanAudio.src = storedAdhanSrc;
+        adhanSelector.value = storedAdhanSrc;
+
+        // Charger et appliquer l'état muet
+        const storedAdhanEnabled = localStorage.getItem('adhanEnabled');
+        const adhanEnabled = storedAdhanEnabled === null ? true : JSON.parse(storedAdhanEnabled);
+        adhanAudio.muted = !adhanEnabled;
+        updateMuteButtonIcon(adhanEnabled);
+
+        // Charger les données des heures de prière
+        const now = new Date();
+        const month = now.getMonth() + 1;
+        const year = now.getFullYear();
+        const city = localStorage.getItem('city');
+        const country = localStorage.getItem('country');
+        const storageKey = `${city}-${country}-${month}-${year}`;
+
+        if (localStorage.getItem(storageKey)) {
+            const storedData = JSON.parse(localStorage.getItem(storageKey));
+            displayPrayerTimes(storedData);
+        } else {
+            alert('Aucune donnée locale trouvée. Veuillez télécharger les données en ligne au moins une fois.');
+        }
+
+        // Vérifier le retour en ligne
+        window.addEventListener('online', () => {
+            alert("Vous êtes en ligne. Rechargez pour mettre à jour les heures de prière.");
+        });
+
+        // Bouton mute
+        muteButton.addEventListener('click', toggleMute);
+
+        // Sélection de l'Adhan
+        adhanSelector.addEventListener('change', () => {
+            const selectedAdhan = adhanSelector.value;
+            localStorage.setItem('selectedAdhan', selectedAdhan);
+            adhanAudio.src = selectedAdhan;
+        });
+    });
+
+    function displayPrayerTimes(data) {
+        const { ville, pays, timings } = data;
+        const jours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+        const now = new Date();
+        const jour = jours[now.getDay()];
+        const dateActuelle = `${jour} ${now.toLocaleDateString()}`;
+
+        const prayerTimes = `
+            <h2>Heures de prière pour ${ville}, ${pays}</h2>
+            <p>Date actuelle : ${dateActuelle}</p>
+            <p>Fajr: ${timings.Fajr}</p>
+            <p>Dhuhr: ${timings.Dhuhr}</p>
+            <p>Asr: ${timings.Asr}</p>
+            <p>Maghrib: ${timings.Maghrib}</p>
+            <p>Isha: ${timings.Isha}</p>
+        `;
+        document.getElementById("prayerTimes").innerHTML = prayerTimes;
+
+        afficherTempsRestant(timings);
+    }
+
+    function toggleMute() {
+        const adhanAudio = document.getElementById('adhanAudio');
+        const isMuted = adhanAudio.muted;
+        adhanAudio.muted = !isMuted;
+        localStorage.setItem('adhanEnabled', JSON.stringify(!isMuted));
+        updateMuteButtonIcon(!isMuted);
+    }
+
+    function updateMuteButtonIcon(isEnabled) {
+        const muteButton = document.getElementById('muteButton');
+        muteButton.textContent = isEnabled ? '🔊' : '🔇';
+    }
+
+    function afficherTempsRestant(timings) {
+        const adhanAudio = document.getElementById('adhanAudio');
+        let adhanPlayed = false;
+
+        const nextPrayer = getNextPrayer(timings);
+        if (nextPrayer) {
+            const updateCountdown = () => {
+                const timeRemaining = calculerTempsRestant(nextPrayer.time);
+
+                if (timeRemaining === '0s' && !adhanPlayed) {
+                    adhanAudio.play();
+                    adhanPlayed = true;
+
+                    document.getElementById('countdown').textContent = `C'est l'heure de ${nextPrayer.name}.`;
+                    setTimeout(() => {
+                        adhanPlayed = false;
+                        location.reload();
+                    }, 600000); // Recharger 10 minutes après la prière
+                } else {
+                    document.getElementById('countdown').textContent = `Temps restant avant ${nextPrayer.name}: ${timeRemaining}`;
+                }
+            };
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+    }
+
+    function calculerTempsRestant(timing) {
+        const now = new Date();
+        const prayerTime = new Date(now.toDateString() + ' ' + timing);
+
+        let diff = (prayerTime - now) / 1000;
+        if (diff < 0) {
+            diff += 24 * 3600;
+        }
+
+        const hours = Math.floor(diff / 3600);
+        diff %= 3600;
+        const minutes = Math.floor(diff / 60);
+        const seconds = Math.floor(diff % 60);
+
+        let result = '';
+        if (hours > 0) result += `${hours}h `;
+        if (minutes > 0 || hours > 0) result += `${minutes} min `;
+        else result += `${seconds}s`;
+
+        return result.trim();
+    }
+
+    function getNextPrayer(timings) {
+        const now = new Date();
+        const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+
+        for (const prayer of prayers) {
+            const prayerTime = new Date(now.toDateString() + ' ' + timings[prayer]);
+            if (prayerTime > now) {
+                return { name: prayer, time: timings[prayer] };
+            }
+        }
+        return { name: 'Fajr', time: timings['Fajr'] }; // Retourner Fajr du lendemain
+    }
+
+</script>
