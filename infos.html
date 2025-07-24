@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Informations sur les méthodes de calcul de prières</title>
+    <style>
+        /* Styles généraux pour la page */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #dba669;
+            color: #333;
+        }
+
+        h1 {
+            color: #226828;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        a {
+            color: #226828;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            color: #226828;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+
+
+
+    #clearLocalStorageButton {
+        margin-top: 30px; /* Ajoute de l'espace au-dessus du bouton */
+        background-color: #226828;
+        color: #fff;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Informations sur les méthodes de calcul de prières</h1>
+    </div>
+
+    <div class="section">
+        <h2>Qu’est-ce qu’une méthode ?</h2>
+        <p>
+            L’aspect mathématique de la façon dont le calcul devrait fonctionner est généralement convenu dans le monde islamique. Là encore, c’est une hypothèse que je fais en fonction du nombre de pays qui utilisent le calcul basé sur l’angle. Cependant, en fonction de l’emplacement, des préférences gouvernementales et d’autres « facteurs », il existe des différences dans les méthodes qui produisent, parfois, une variation substantielle des délais.
+            Si le côté mathématique vous intéresse, jetez un œil à cette excellente explication :
+            <a href="http://praytimes.org/wiki/Prayer_Times_Calculation" target="_blank">PrayTimes.org</a>.
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>Éléments d’une méthode de calcul</h2>
+        <p>
+            Une méthode de calcul se compose généralement des éléments suivants :
+        <ul>
+            <li>L’angle Fajr</li>
+            <li>L’angle maghrib ou quelques minutes après le coucher du soleil que Maghrib devrait être</li>
+            <li>L’angle Isha ou quelques minutes après Maghrib qu’Isha devrait être</li>
+        </ul>
+        La plupart des pays adhèrent à l’une des méthodes ci-dessus, et ils ajustent ensuite les calendriers, en ajoutant quelques minutes ici et là, sur la base de critères qui peuvent sembler complètement arbitraires. Vous verrez donc quelques minutes différées. Habituellement, cette différence peut aller de 1 à 5 minutes.
+        </p>
+    </div>
+
+    <p style="font-size: 12px; margin-right: 8px; color: #226828;">Pour toutes suggestions, retours ou problèmes veuillez me contacter à cette adresse mail : muslimeverywherecontact@gmail.com
+
+    </p>
+    <div id="navigationButtons" style="margin-top: 20px;">
+        <button onclick="window.location.href='calendar.html'" data-text="Calendar">Calendrier</button>
+        <button onclick="window.location.href='index.html'" data-text="Accueil">Home</button>
+        <button onclick="window.location.href='privacy.html'" data-text="Confidentialité">Privacy</button>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 Muslim Everywhere. Tous droits réservés.</p>
+    </div>
+</div>
+
+
+<script>
+// dans le html : <button id="clearLocalStorageButton">Vider les paramètres</button>
+    // Ajouter un écouteur d'événement pour le bouton "Vider les paramètres"
+    document.getElementById('clearLocalStorageButton').addEventListener('click', () => {
+        // Vider le localStorage
+        localStorage.clear();
+
+        // Rafraîchir la page pour appliquer les changements
+        location.reload();
+    });
+</script>
+
+
+</body>
+</html>
